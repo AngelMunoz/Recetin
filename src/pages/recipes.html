@@ -1,0 +1,9 @@
+<template>
+  <require from="../components/rec-recipe-card"></require>
+  <h1>Recipes</h1>
+  <ul uk-grid class="uk-grid-small uk-grid-divider">
+    <rec-recipe-card repeat.for="recipe of recipes"  recipe.bind="recipe"
+      on-view-requested.delegate="goTo($event, 'view')" on-edit-requested.delegate="goTo($event, 'edit')">
+    </rec-recipe-card>
+  </ul>
+</template>

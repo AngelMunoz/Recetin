@@ -1,0 +1,42 @@
+.rec-recipe {
+  display: grid;
+  grid-template:
+    'header header' auto
+    'ingredients steps' 1fr
+    'ingredients steps' 1fr
+    'footer footer' auto / 1fr 1fr;
+    
+  .rec-recipe-header {
+    grid-area: header;
+  }
+  .rec-recipe-ingredients {
+    grid-area: ingredients
+  }
+  .rec-recipe-steps {
+    grid-area: steps;
+  }
+  .rec-recipe-footer {
+    grid-area: footer;
+  }
+
+  @media screen and (max-width: 768px) {
+    grid-template: 
+    'header ingredients' 1fr
+    'steps steps' 1fr
+    'footer footer' auto / 1fr 1fr;
+  }
+
+  @media screen and (max-width: 526px) {
+    grid-template: 
+    'header' 1fr
+    'ingredients' 1fr
+    'steps' 1fr
+    'footer' auto / auto;
+  }
+
+  &.with-edit-form {
+    display: flex;
+    flex-direction: column;
+  }
+
+}

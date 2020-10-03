@@ -1,0 +1,53 @@
+.recipe-form {
+  display: flex;
+  flex-direction: column;
+  .is-in-off-canvas {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .show-as-grid {
+    display: grid;
+    gap: 1em;
+    grid-template: 
+      'info steps steps' auto
+      'ingredients steps steps'1fr
+      'submit submit submit' auto / 1fr 1fr 1fr;
+  }
+
+  .form-section-info {
+    grid-area: info;
+    margin-top: 20px;
+  }
+  
+  .form-section-ingredients {
+    grid-area: ingredients;
+  }
+
+  .form-section-steps {
+    grid-area: steps;
+  }
+  .submit-area {
+    grid-area: submit;
+  }
+
+  @media screen and (max-width: 768px) {
+    .show-as-grid {
+      grid-template: 
+        'info steps' auto
+        'ingredients steps' 1fr
+        'submit submit' auto / 1fr 1fr;
+    }
+  }
+
+  @media screen and (max-width: 525px) {
+    .show-as-grid {
+      grid-template: 
+        'info' auto
+        'ingredients' 1fr
+        'steps' 1fr
+        'submit' auto / 100%;
+    }
+  }
+
+}

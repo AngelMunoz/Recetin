@@ -1,0 +1,115 @@
+<template>
+  <require from="./recipes-detail.scss"></require>
+  <require from="../components/recipe-form"></require>
+  <article class="rec-recipe" if.bind="!isEditing">
+    <header class="rec-recipe-header">
+      <h1 class="uk-heading-divider">${recipe.title}</h1>
+      <p>${recipe.description}</p>
+    </header>
+    <section class="rec-recipe-ingredients" if.bind="recipe.ingredients.length > 0">
+      <h3 class="uk-heading-divider">Ingredientes</h3>
+      <ul class="uk-list uk-list-square">
+        <li repeat.for="ingredient of recipe.ingredients">
+          <p>
+            ${ingredient.name}
+            <strong>
+              <span>${ingredient.amount}</span>
+              <small>${ingredient.unit}</small>
+            </strong>
+            <button if.bind="ingredient.replacements.length > 0" class="uk-icon-button" uk-icon="more-vertical" uk-tooltip="Mostrar posibles reemplazos"
+              uk-toggle="target: #remplazos" type="button"></button>
+          </p>
+          <ul id="remplazos" if.bind="ingredient.replacements.length > 0" hidden>
+            <li repeat.for="replacement of ingredient.replacements">
+              <p>
+                ${replacement.name}
+                <strong>
+                  <span>${replacement.amount}</span>
+                  <small>${replacement.unit}</small>
+                </strong>
+              </p>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+    <section else class="rec-recipe-ingredients uk-placeholder">
+      No hay ingredientes en esta receta, quiza quieras agregar algunos? <br />
+      <rec-icon icon="Add" can-click="true" click.delegate="addNewIngredient()"></rec-icon>
+      </rec-icon>
+      <form name="ingredientsForm" submit.trigger="trySaveRecipe('ingredients', newIngredients)">
+        <section class="uk-margin" repeat.for="ingredient of newIngredients">
+          <div class="uk-margin">
+            <input type="text" class="uk-input uk-form-small uk-form-width-small" name="ingredient-${$index}"
+              id="ingredient-${$index}" placeholder="ingrediente" value.bind="ingredient.name" required maxlength="60">
+            <input type="text" class="uk-input uk-form-small uk-form-width-xsmall" name="ingredient-${$index}"
+              id="ingredient-${$index}" placeholder="cantidad" value.bind="ingredient.amount" required maxlength="10">
+            <input type="text" class="uk-input uk-form-small uk-form-width-xsmall" name="ingredient-${$index}"
+              id="ingredient-${$index}" placeholder="unidad" value.bind="ingredient.unit" required maxlength="10">
+            <rec-icon icon="Trash" can-click="true" click.delegate="removeNewIngredient($index)"></rec-icon>
+          </div>
+          <label for="ingredient-${$index}">posible reemplazo <small>(opcional)</small>
+            <rec-icon icon="Add" can-click="true" click.delegate="addNewIngredientReplacement($index)"></rec-icon>
+          </label>
+          <div class="uk-margin">
+            <div repeat.for="replacement of ingredient.replacements">
+              <input type="text" class="uk-input uk-form-small uk-form-width-small" name="replacement-${$index}"
+                id="replacement-${$index}" placeholder="reemplazo" value.bind="replacement.name" required
+                maxlength="60">
+              <input type="text" class="uk-input uk-form-small uk-form-width-xsmall" name="replacement-${$index}"
+                id="replacement-${$index}" placeholder="cantidad" value.bind="replacement.amount" required
+                maxlength="10">
+              <input type="text" class="uk-input uk-form-small uk-form-width-xsmall" name="replacement-${$index}"
+                id="replacement-${$index}" placeholder="unidad" value.bind="replacement.unit" required maxlength="10">
+              <rec-icon icon="Trash" can-click="true"
+                click.delegate="removeNewIngredientReplacement($parent.$index, $index)"></rec-icon>
+            </div>
+          </div>
+          <hr />
+        </section>
+        <section class="uk-margin">
+          <button type="submit" class="uk-button"><rec-icon icon="Save"></rec-icon> Guardar Ingredientes</button>
+        </section>
+      </form>
+    </section>
+    <section class="rec-recipe-steps" if.bind="recipe.steps.length > 0">
+      <ul uk-accordion="multiple: true">
+        <li repeat.for="step of recipe.steps">
+          <a class="uk-accordion-title" href="#">Paso ${step.order + 1}</a>
+          <div class="uk-accordion-content">
+            <p>${step.directions}</p>
+          </div>
+        </li>
+      </ul>
+    </section>
+    <section else class="rec-recipe-steps uk-placeholder">
+      No hay pasos en esta receta, quiza quieras agregar algunos?
+      <br>
+      <rec-icon icon="Add" can-click="true" click.delegate="addNewStep()"></rec-icon>
+      <form name="stepsForm" submit.trigger="trySaveRecipe('steps', newSteps)">
+        <section class="uk-margin" repeat.for="step of newSteps">
+          <div class="uk-margin">
+            <input type="text" class="uk-input uk-form-small uk-form-width-small" name="step-${$index}"
+              id="step-${$index}" placeholder="Paso ${$index + 1}" value.bind="step.directions" required
+              maxlength="240">
+            <rec-icon icon="Trash" can-click="true" click.delegate="removeNewStep($index)"></rec-icon>
+          </div>
+          <hr />
+        </section>
+        <section class="uk-margin">
+          <button type="submit" class="uk-button">
+            <rec-icon icon="Save"></rec-icon> Guardar Pasos
+          </button>
+        </section>
+      </form>
+    </section>
+    <footer class="rec-recipe-footer">
+      <p>${recipe.notes}</p>
+    </footer>
+  </article>
+  <article class="rec-recipe with-edit-form" else>
+    <recipe-form recipe.bind="recipe" on-submit.delegate="trySaveEdit($event)"
+      on-title-changed.delegate="checkRecipeName($event)" recipe-title-error.bind="recipeTitleError"
+      prevent-save.bind="preventSave"></recipe-form>
+  </article>
+</template>

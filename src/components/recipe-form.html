@@ -1,0 +1,127 @@
+<template class="recipe-form">
+  <require from="./recipe-form.scss"></require>
+  <form submit.trigger="onSubmit()" class="${(isInOffCanvas === 'true' || isInOffCanvas === true) ? 'is-in-off-canvas' : 'show-as-grid' }">
+    <fieldset class="${(isInOffCanvas === 'true' || isInOffCanvas === true) ? 'uk-fieldset' : ''} form-section-info">
+      <legend class="uk-legend">Informacion Principal</legend>
+      <section class="uk-margin">
+        <label for="title" class="uk-form-label">Nombre</label>
+        <div class="uk-form-controls">
+          <input type="text"
+            class="uk-input ${ !recipeTitleError && recipe.title ? 'uk-form-success' : 'uk-form-danger'}" name="title"
+            id="title" value.bind="recipe.title" keyup.delegate="onTitleChanged($event)" required maxlength="100" />
+          <p if.bind="recipeTitleError">El nombre de esta receta ya fue usado previamente</p>
+        </div>
+      </section>
+      <section class="uk-margin">
+        <label for="description" class="uk-form-label">Descripcion</label>
+        <div class="uk-form-controls">
+          <textarea class="uk-textarea" name="description" id="description" value.bind="recipe.description" rows="6"
+            required maxlength="240"></textarea>
+        </div>
+      </section>
+    </fieldset>
+    <fieldset class="uk-fieldset form-section-optional-values" if.bind="isInOffCanvas === 'true' || isInOffCanvas === true">
+      <legend class="uk-legend">Datos Complementarios <small>(opcionales)</small></legend>
+      <ul uk-accordion="multiple: true">
+        <li>
+          <a class="uk-accordion-title">Ingredientes</a>
+          <div class="uk-accordion-content">
+            <rec-icon icon="Add" can-click="true" click.delegate="addIngredient()" uk-tooltip="Agregar ingrediente"></rec-icon>
+            <ul class="uk-list uk-list-square">
+              <li repeat.for="ingredient of recipe.ingredients">
+                <input type="text" class="uk-input uk-form-width-medium" name="ingredient-name-${$index}" id="ingredient-name-${$index}"
+                  value.bind="ingredient.name" placeholder="Nombre" required maxlength="60" />
+                <input type="text" class="uk-input uk-form-width-xsmall" name="ingredient-amount-${$index}" id="ingredient-amount-${$index}"
+                  placeholder="100" value.bind="ingredient.amount" required maxlength="10" />
+                <input type="text" class="uk-input uk-form-width-xsmall" name="ingredient-unit-${$index}" id="ingredient-unit-${$index}"
+                  placeholder="ml." value.bind="ingredient.unit" required maxlength="10" />
+                <br />
+                <rec-icon icon="Trash" can-click="true" click.delegate="removeIngredient(ingredient)" uk-tooltip="Remover ingrediente"></rec-icon>
+                <label>Posibles reemplazos <rec-icon icon="Add" can-click="true" click.delegate="addReplacement(ingredient)" uk-tooltip="Agregar posibles reemplazos">
+                  </rec-icon>
+                </label>
+                <br />
+                <ul class="uk-list uk-list-circle">
+                  <li repeat.for="replacement of ingredient.replacements">
+                    <input type="text" class="uk-input" name="replacement-name-${$index}" placeholder="Nombre"
+                      id="replacement-name-${$index}" value.bind="replacement.name" required maxlength="60" />
+                    <input type="text" class="uk-input uk-form-width-xsmall" name="replacement-amount-${$index}"
+                      placeholder="100" id="replacement-amount-${$index}"
+                      value.bind="replacement.amount" required maxlength="10" />
+                    <input type="text" class="uk-input uk-form-width-xsmall" name="replacement-unit-${$index}"
+                      placeholder="ml." id="replacement-unit-${$index}"
+                      value.bind="replacement.unit" required maxlength="10" />
+                    <rec-icon icon="Trash" can-click="true" click.delegate="removeReplacement(ingredient, replacement)" uk-tooltip="Remover posible reemplazo">
+                    </rec-icon>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <a class="uk-accordion-title">Pasos</a>
+          <div class="uk-accordion-content">
+            <rec-icon icon="Add" can-click="true" click.delegate="addStep()" uk-tooltip="Agregar pasos"></rec-icon>
+            <ul class="uk-list uk-list-square" uk-sortable moved.delegate="onStepMoved($event)">
+              <li repeat.for="step of recipe.steps" data-order.bind="step.order">
+                <textarea type="text" class="uk-textarea" name="step-order-${$index}" id="step-name-${$index}"
+                  value.bind="step.directions" required maxlength="240"></textarea>
+                <rec-icon icon="Trash" can-click="true" click.delegate="removeStep(step)" uk-tooltip="Remover paso"></rec-icon>
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </fieldset>
+    <fieldset class="form-section-ingredients" if.bind="isInOffCanvas === 'false' || isInOffCanvas === false">
+      <legend class="uk-legend">Ingredientes <rec-icon icon="Add" can-click="true" click.delegate="addIngredient()" uk-tooltip="Agregar Ingrediente"></rec-icon></legend>
+      <ul class="uk-list uk-list-square">
+        <li repeat.for="ingredient of recipe.ingredients">
+          <input type="text" class="uk-input uk-form-width-medium" name="ingredient-name-${$index}"
+            id="ingredient-name-${$index}" value.bind="ingredient.name" placeholder="Nombre" required maxlength="60" />
+          <input type="text" class="uk-input uk-form-width-xsmall" name="ingredient-amount-${$index}"
+            id="ingredient-amount-${$index}" placeholder="100" value.bind="ingredient.amount" required maxlength="10" />
+          <input type="text" class="uk-input uk-form-width-xsmall" name="ingredient-unit-${$index}"
+            id="ingredient-unit-${$index}" placeholder="ml." value.bind="ingredient.unit" required maxlength="10" />
+          <br />
+          <rec-icon icon="Trash" can-click="true" click.delegate="removeIngredient(ingredient)" uk-tooltip="Remover ingrediente"></rec-icon>
+          <label>Posibles reemplazos <rec-icon icon="Add" can-click="true" click.delegate="addReplacement(ingredient)">
+            </rec-icon>
+          </label>
+          <br />
+          <ul class="uk-list uk-list-circle">
+            <li repeat.for="replacement of ingredient.replacements">
+              <input type="text" class="uk-input" name="replacement-name-${$index}" placeholder="Nombre"
+                id="replacement-name-${$index}" value.bind="replacement.name" required maxlength="60" />
+              <input type="text" class="uk-input uk-form-width-xsmall" name="replacement-amount-${$index}" placeholder="100"
+                id="replacement-amount-${$index}" value.bind="replacement.amount" required maxlength="10" />
+              <input type="text" class="uk-input uk-form-width-xsmall" name="replacement-unit-${$index}" placeholder="ml."
+                id="replacement-unit-${$index}" value.bind="replacement.unit" required maxlength="10" />
+              <rec-icon icon="Trash" can-click="true" click.delegate="removeReplacement(ingredient, replacement)" uk-tooltip="remover posible reemplazo">
+              </rec-icon>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </fieldset>
+    <fieldset class="form-section-steps" if.bind="isInOffCanvas === 'false' || isInOffCanvas === false">
+      <legend class="uk-legend">Pasos <rec-icon icon="Add" can-click="true" click.delegate="addStep()" uk-tooltip="Agregar pasos"></rec-icon></legend>
+      <ul class="uk-list uk-list-square" uk-sortable moved.delegate="onStepMoved($event)">
+        <li repeat.for="step of recipe.steps" data-order.bind="step.order">
+          <textarea type="text" class="uk-textarea" name="step-order-${$index}" id="step-name-${$index}"
+            value.bind="step.directions" required maxlength="240"></textarea>
+          <rec-icon icon="Trash" can-click="true" click.delegate="removeStep(step)" uk-tooltip="Remover paso"></rec-icon>
+        </li>
+      </ul>
+    </fieldset>
+    <fieldset class="uk-fieldset submit-area">
+      <button class="uk-button uk-button-secondary" disabled.bind="recipeTitleError || preventSave">
+        <div uk-spinner if.bind="preventSave"></div>
+        <span if.bind="!preventSave">
+          <rec-icon icon="Save" can-click="true"></rec-icon> Guardar Receta
+        </span>
+      </button>
+    </fieldset>
+  </form>
+</template>

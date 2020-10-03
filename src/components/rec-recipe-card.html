@@ -1,0 +1,10 @@
+<template class="uk-card  ">
+  <div class="uk-card-header">
+    <h3 class="uk-card-title">${recipe.title}</h3>
+  </div>
+  <div class="uk-card-body">${description}</div>
+  <div class="uk-card-footer">
+    <a class="uk-button uk-button-text" click.delegate="onViewRecipe(recipe._id)">Ver</a>
+    <a class="uk-button uk-button-text" click.delegate="onEditRecipe(recipe._id)">Editar</a>
+  </div>
+</template>
