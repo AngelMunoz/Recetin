@@ -3,8 +3,30 @@
   <require from="../components/recipe-form"></require>
   <article class="rec-recipe" if.bind="!isEditing">
     <header class="rec-recipe-header">
-      <h1 class="uk-heading-divider">${recipe.title}</h1>
-      <p>${recipe.description}</p>
+      <h1 class="uk-heading-divider">
+        ${recipe.title}
+        <br />
+        <rec-icon icon="Edit" can-click='true' click.delegate="startEdit()" uk-tooltip="Editar receta"></rec-icon>
+        <rec-icon if.bind="canShare" icon="Share" can-click='true' click.delegate="startShare()" uk-tooltip="Compartir">
+        </rec-icon>
+        <rec-icon if.bind="canUseClipboard" icon="Copy" can-click='true' click.delegate="startCopy()"
+          uk-tooltip="Copiar al portapapeles"></rec-icon>
+      </h1>
+      <div>
+        <ul class="uk-iconnav">
+          <li>
+            <rec-icon if.bind="canShare" icon="Export" can-click='true' click.delegate="startShare(true)"
+              uk-tooltip="Exportar (formato recetin)"></rec-icon>
+          </li>
+          <li>
+            <rec-icon if.bind="canUseClipboard" icon="CopyExport" can-click='true' click.delegate="startCopy(true)"
+              uk-tooltip="Copiar al portapapeles (formato recetin)"></rec-icon>
+          </li>
+        </ul>
+        <p>
+          ${recipe.description}
+        </p>
+      </div>
     </header>
     <section class="rec-recipe-ingredients" if.bind="recipe.ingredients.length > 0">
       <h3 class="uk-heading-divider">Ingredientes</h3>
@@ -16,8 +38,8 @@
               <span>${ingredient.amount}</span>
               <small>${ingredient.unit}</small>
             </strong>
-            <button if.bind="ingredient.replacements.length > 0" class="uk-icon-button" uk-icon="more-vertical" uk-tooltip="Mostrar posibles reemplazos"
-              uk-toggle="target: #remplazos" type="button"></button>
+            <button if.bind="ingredient.replacements.length > 0" class="uk-icon-button" uk-icon="more-vertical"
+              uk-tooltip="Mostrar posibles reemplazos" uk-toggle="target: #remplazos" type="button"></button>
           </p>
           <ul id="remplazos" if.bind="ingredient.replacements.length > 0" hidden>
             <li repeat.for="replacement of ingredient.replacements">
@@ -68,7 +90,9 @@
           <hr />
         </section>
         <section class="uk-margin">
-          <button type="submit" class="uk-button"><rec-icon icon="Save"></rec-icon> Guardar Ingredientes</button>
+          <button type="submit" class="uk-button">
+            <rec-icon icon="Save"></rec-icon> Guardar Ingredientes
+          </button>
         </section>
       </form>
     </section>
@@ -108,8 +132,28 @@
     </footer>
   </article>
   <article class="rec-recipe with-edit-form" else>
+    <ul class="uk-iconnav">
+      <li>
+        <a>
+          <rec-icon icon="Cancel" can-click='true' click.delegate="startCancelEdit()" uk-tooltip="Cancelar Edicion">
+          </rec-icon>
+        </a>
+      </li>
+    </ul>
     <recipe-form recipe.bind="recipe" on-submit.delegate="trySaveEdit($event)"
       on-title-changed.delegate="checkRecipeName($event)" recipe-title-error.bind="recipeTitleError"
       prevent-save.bind="preventSave"></recipe-form>
+
+    <div ref="cancelModal" uk-modal>
+      <div class="uk-modal-dialog uk-modal-body">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <h2 class="uk-modal-title">Hay cambios pendientes</h2>
+        <p>&OpenCurlyDoubleQuote;${_original.title}&CloseCurlyDoubleQuote; contiene cambios pendientes, desea descartar
+          los cambios?</p>
+        <button class="uk-button uk-button-text uk-modal-close">Cancelar</button>
+        <button class="uk-button uk-button-default" click.delegate="cancelEdit()">Si, descartar cambios</button>
+      </div>
+    </div>
+
   </article>
 </template>

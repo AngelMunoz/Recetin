@@ -130,7 +130,7 @@ function stringifyStep(step: RecipeStep): string {
  * @param {Recipe} recipe 
  * @returns {string}
  */
-function stringifyRecipe(recipe: Recipe): string {
+function stringifyRecipe(recipe: Recipe, isExport = false): string {
   let mainStuff = `> ${recipe.title.split('\n').join('\n>').trim()}\n< ${recipe.description.split('\n').join('\n< ').trim()}\n= ${recipe?.notes?.split('\n')?.join('\n= ') ?? ""}`;
   const ingredients = recipe?.ingredients?.map(stringifyIngredient) ?? [];
   for (const ingredient of ingredients) {
@@ -139,6 +139,9 @@ function stringifyRecipe(recipe: Recipe): string {
   const steps = recipe?.steps?.map(stringifyStep) ?? [];
   for (const step of steps) {
     mainStuff += `\n${step}`;
+  }
+  if(!isExport) {
+    return mainStuff.replace(/[>~<=+]|(.-|.~)/ig, '');
   }
   return mainStuff
 }
@@ -198,7 +201,7 @@ export interface IRecipeService {
   saveRecipe(recipe: SaveRecipeProps, recipeImg?: File): Promise<Recipe>;
   getRecipes(): Promise<{ recipes: Recipe[], count: number }>;
   getRecipe(recipeId: string): Promise<Recipe>;
-  stringify(recipe: Recipe): string;
+  stringify(recipe: Recipe, isExport?: boolean): string;
   parse(recipe: string): SaveRecipeProps;
 }
 
@@ -207,6 +210,6 @@ export class RecipeService implements IRecipeService {
   saveRecipe: (recipe: SaveRecipeProps, recipeImg?: File) => Promise<Recipe> = saveRecipe.bind(this);
   getRecipes: () => Promise<{ recipes: Recipe[], count: number }> = getRecipes.bind(this);
   getRecipe: (recipeId: string) => Promise<Recipe> = getRecipe.bind(this);
-  stringify: (recipe: Recipe) => string = stringifyRecipe;
+  stringify: (recipe: Recipe, isExport?: boolean) => string = stringifyRecipe;
   parse: (recipe: string) => SaveRecipeProps = parseRecipe;
 }

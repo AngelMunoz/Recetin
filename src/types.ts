@@ -30,8 +30,19 @@ export type IconName =
   | 'Save'
   | 'MoreVert'
   | 'Cancel'
-  | 'Upload';
+  | 'Upload'
+  | 'Share'
+  | 'Copy'
+  | 'CopyExport'
+  | 'Export'
+  | 'Import'
+  ;
 
 export enum Events {
   CreatedRecipe = 'CreatedRecipe'
 }
+
+export type AppState = {
+  canUseShareAPI: boolean;
+  canUseClipboardAPI: boolean;
+};

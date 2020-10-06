@@ -5,9 +5,16 @@
     <nav class="uk-navbar-container" uk-navbar>
       <div class="uk-navbar-left">
         <ul class="uk-navbar-nav">
-          <li class="uk-active"><a href="#new-recipe-off-canvas" uk-toggle>
-              <rec-icon icon="Add" can-click="true"></rec-icon> Nueva Receta
-            </a></li>
+          <li>
+            <a href="#new-recipe-off-canvas" uk-toggle>
+              <rec-icon icon="Add" can-click="true" uk-tooltip="Agregar Receta"></rec-icon> Nueva Receta
+            </a>
+          </li>
+          <li>
+            <a href="#import-recipe-off-canvas" uk-toggle>
+              <rec-icon icon="Import" can-click="true" uk-tooltip="Importar receta (formato recetin)"></rec-icon>
+            </a>
+          </li>
         </ul>
       </div>
     </nav>
@@ -16,6 +23,15 @@
     <div class="uk-offcanvas-bar">
       <button class="uk-offcanvas-close" type="button" uk-close></button>
       <recipe-form recipe.bind="newRecipe" on-submit.delegate="trySaveRecipe($event)"
+        on-title-changed.delegate="checkRecipeName($event)" recipe-title-error.bind="recipeTitleError"
+        prevent-save.bind="preventSave" is-in-off-canvas.bind="true"></recipe-form>
+    </div>
+  </section>
+  <section id="import-recipe-off-canvas" uk-offcanvas="overlay: true"
+    show.delegate="checkClipboard($event)">
+    <div class="uk-offcanvas-bar">
+      <button class="uk-offcanvas-close" type="button" uk-close></button>
+      <recipe-form recipe.bind="importRecipe" on-submit.delegate="trySaveRecipe($event)"
         on-title-changed.delegate="checkRecipeName($event)" recipe-title-error.bind="recipeTitleError"
         prevent-save.bind="preventSave" is-in-off-canvas.bind="true"></recipe-form>
     </div>

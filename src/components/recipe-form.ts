@@ -28,13 +28,15 @@ export class RecipeForm {
   constructor(private el: Element) { }
 
   attached() {
-    const evt = new CustomEvent<string>('on-title-changed', {
-      bubbles: true,
-      cancelable: true,
-      composed: true,
-      detail: this.recipe.title
-    });
-    this.el.dispatchEvent(evt);
+    if(this.recipe && this.recipe.title) {
+      const evt = new CustomEvent<string>('on-title-changed', {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        detail: this.recipe.title
+      });
+      this.el.dispatchEvent(evt);
+    }
   }
 
   onSubmit() {

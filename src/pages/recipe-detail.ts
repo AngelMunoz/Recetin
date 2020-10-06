@@ -1,13 +1,21 @@
 import { autoinject } from 'aurelia-framework'
 import { RecipeService, SaveRecipeProps } from 'services/recipes';
-import { Ingredient, Recipe, RecipeStep } from 'types';
+import { AppState, Ingredient, Recipe, RecipeStep } from 'types';
 import { Redirect } from 'aurelia-router';
+import { deepEqual } from 'utils';
+import { connectTo, Store } from 'aurelia-store';
+import { pluck } from 'rxjs/operators'
 import UIkit from 'uikit';
-
 
 type RecipeParams = { recipeid?: string, operation?: 'view' | 'edit' }
 
-@autoinject
+@autoinject()
+@connectTo<AppState>({
+  selector: {
+    canShare: (store: Store<AppState>) => store.state.pipe(pluck('canUseShareAPI')),
+    canUseClipboard: (store: Store<AppState>) => store.state.pipe(pluck('canUseClipboardAPI'))
+  }
+})
 export class RecipeDetail {
   public isEditing = false;
   public recipeTitleError = false;
@@ -18,7 +26,55 @@ export class RecipeDetail {
   private newIngredients: Ingredient[] = [];
   private newSteps: RecipeStep[] = [];
 
+  private _original?: Recipe;
+
+  cancelModal: HTMLDivElement = null;
+
+  public canShare?: boolean;
+  public canUseClipboard?: boolean;
+
+
   constructor(private $recipes: RecipeService) { }
+
+  public startEdit() {
+    this._original = { ...this.recipe };
+    this.isEditing = true;
+  }
+
+  public startCancelEdit() {
+    if (!deepEqual(this.recipe, this._original)) {
+      UIkit.modal(this.cancelModal).show();
+      return;
+    }
+    this.isEditing = false;
+  }
+
+  public cancelEdit() {
+    UIkit.modal(this.cancelModal).hide();
+    this.recipe = { ...this._original };
+    this.isEditing = false;
+    this._original = undefined;
+  }
+
+  public async startShare(isExport = false) {
+    try {
+      await navigator.share({ text: this.$recipes.stringify(this.recipe, isExport), title: this.recipe.title });
+    } catch (error) {
+      console.warn({ shareError: error });
+      UIkit.notification('No se pudo compartir la receta', { status: 'warning' })
+    }
+  }
+
+  public async startCopy(isExport = false) {
+    try {
+      await navigator.clipboard.writeText(this.$recipes.stringify(this.recipe, isExport));
+    } catch (error) {
+      console.warn({ copyError: error });
+      UIkit.notification('No se pudo copiar la receta', { status: 'warning' })
+    }
+  }
+
+
 
   public addNewIngredient() {
     this.newIngredients = [...this.newIngredients, { name: '', amount: '', unit: '', replacements: [] }];
@@ -102,9 +158,11 @@ export class RecipeDetail {
 
   async activate({ operation, recipeid }: RecipeParams, routeConfig, navigationInstruction) {
     if (!recipeid) { return new Redirect('', { replace: true }); }
-    this.isEditing = (operation ?? '').toLowerCase() === 'edit';
     try {
       this.recipe = await this.$recipes.getRecipe(recipeid);
+      if ((operation ?? '').toLowerCase() === 'edit') {
+        this.startEdit();
+      }
     } catch (error) {
       console.warn({ activateError: error });
     }
