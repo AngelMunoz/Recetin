@@ -39,7 +39,8 @@ export type IconName =
   ;
 
 export enum Events {
-  CreatedRecipe = 'CreatedRecipe'
+  CreatedRecipe = 'CreatedRecipe',
+  DeletedRecipe = 'DeletedRecipe'
 }
 
 export type AppState = {

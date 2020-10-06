@@ -4,7 +4,8 @@
   </div>
   <div class="uk-card-body">${description}</div>
   <div class="uk-card-footer">
-    <a class="uk-button uk-button-text" click.delegate="onViewRecipe(recipe._id)">Ver</a>
-    <a class="uk-button uk-button-text" click.delegate="onEditRecipe(recipe._id)">Editar</a>
+    <a class="uk-button uk-button-text" click.delegate="onViewRecipe(recipe._id)">Ver <span uk-icon="info"></span></a>
+    <a class="uk-button uk-button-text" click.delegate="onEditRecipe(recipe._id)">Editar <rec-icon icon="Edit" can-click="true"></rec-icon></a>
+    <a class="uk-button uk-button-text uk-text-danger" click.delegate="onDeleteRecipe(recipe)">Eliminar <rec-icon icon="Trash" can-click="true"></rec-icon></a>
   </div>
 </template>

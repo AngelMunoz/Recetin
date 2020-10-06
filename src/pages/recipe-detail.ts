@@ -113,12 +113,12 @@ export class RecipeDetail {
     switch (type) {
       case 'ingredients': {
         const recipe: Recipe = { ...this.recipe, ingredients: values as Ingredient[] }
-        var promise: Promise<Recipe> = this.$recipes.saveRecipe(recipe);
+        var promise: Promise<Recipe> = this.$recipes.saveRecipe(recipe) as Promise<Recipe>;
         break;
       }
       case 'steps': {
         const recipe: Recipe = { ...this.recipe, steps: values as RecipeStep[] }
-        var promise: Promise<Recipe> = this.$recipes.saveRecipe(recipe);
+        var promise: Promise<Recipe> = this.$recipes.saveRecipe(recipe) as Promise<Recipe>;
         break;
       }
     }
@@ -135,7 +135,7 @@ export class RecipeDetail {
 
   public async trySaveEdit(event: CustomEvent<SaveRecipeProps>) {
     this.preventSave = true;
-    return this.$recipes.saveRecipe(event.detail).then(recipe => {
+    return this.$recipes.saveRecipe(event.detail).then((recipe: Recipe) => {
       this.preventSave = false;
       this.recipe = { ...recipe };
       UIkit.notification({

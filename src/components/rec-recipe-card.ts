@@ -31,4 +31,13 @@ export class RecRecipeCard {
       detail: recipeId
     }));
   }
+
+  onDeleteRecipe(recipe: Recipe) {
+    this.el.dispatchEvent(new CustomEvent<Recipe>('on-delete-requested', {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+      detail: recipe
+    }));
+  }
 }

@@ -44,9 +44,9 @@ function mapResultToRecipe({ _id, title, _rev, description, ingredients, steps, 
   return { _id, title, _rev, description, ingredients, steps, notes, image: getBlobFromAttachment(_attachments) };
 }
 
-export type SaveRecipeProps = Pick<Recipe, 'title' | 'description' | 'ingredients' | 'steps'> & { _id?: string };
+export type SaveRecipeProps = Pick<Recipe, 'title' | 'description' | 'ingredients' | 'steps'> & { _id?: string, _deleted?: boolean };
 
-async function saveRecipe(recipe: SaveRecipeProps, recipeImg?: File): Promise<Recipe> {
+async function saveRecipe(recipe: SaveRecipeProps, recipeImg?: File): Promise<Recipe | void> {
   const recipeId = recipe._id ? recipe._id : `recetin:${recipe.title}:${Date.now()}`
   const attachments: PouchDB.Core.Attachments | undefined = recipeImg ? {
     recipeImage: {
@@ -63,6 +63,9 @@ async function saveRecipe(recipe: SaveRecipeProps, recipeImg?: File): Promise<Re
       steps: recipe.steps ?? [],
       _attachments: attachments
     });
+    if(recipe._deleted) {
+      return;
+    }
     const findResult = await recipes.get<Recipe>(result.id, { attachments: true, binary: true });
     return mapResultToRecipe(findResult)
   } catch (error) {
@@ -198,7 +201,7 @@ function parseRecipe(recipe: string) {
 
 export interface IRecipeService {
   recipeNameExists(title: string): Promise<boolean>;
-  saveRecipe(recipe: SaveRecipeProps, recipeImg?: File): Promise<Recipe>;
+  saveRecipe(recipe: SaveRecipeProps, recipeImg?: File): Promise<Recipe | void>;
   getRecipes(): Promise<{ recipes: Recipe[], count: number }>;
   getRecipe(recipeId: string): Promise<Recipe>;
   stringify(recipe: Recipe, isExport?: boolean): string;
@@ -207,7 +210,7 @@ export interface IRecipeService {
 
 export class RecipeService implements IRecipeService {
   recipeNameExists: (title: string) => Promise<boolean> = recipeNameExists.bind(this);
-  saveRecipe: (recipe: SaveRecipeProps, recipeImg?: File) => Promise<Recipe> = saveRecipe.bind(this);
+  saveRecipe: (recipe: SaveRecipeProps, recipeImg?: File) => Promise<Recipe | void> = saveRecipe.bind(this);
   getRecipes: () => Promise<{ recipes: Recipe[], count: number }> = getRecipes.bind(this);
   getRecipe: (recipeId: string) => Promise<Recipe> = getRecipe.bind(this);
   stringify: (recipe: Recipe, isExport?: boolean) => string = stringifyRecipe;

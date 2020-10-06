@@ -2,8 +2,20 @@
   <require from="../components/rec-recipe-card"></require>
   <h1>Recipes</h1>
   <ul uk-grid class="uk-grid-small uk-grid-divider">
-    <rec-recipe-card repeat.for="recipe of recipes"  recipe.bind="recipe"
-      on-view-requested.delegate="goTo($event, 'view')" on-edit-requested.delegate="goTo($event, 'edit')">
+    <rec-recipe-card repeat.for="recipe of recipes" recipe.bind="recipe"
+      on-view-requested.delegate="goTo($event, 'view')" on-edit-requested.delegate="goTo($event, 'edit')"
+      on-delete-requested.delegate="tryDelete($event)">
     </rec-recipe-card>
   </ul>
+  <div ref="cancelModal" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+      <button class="uk-modal-close-default" type="button" uk-close></button>
+      <h2 class="uk-modal-title">Eliminar Receta</h2>
+      <p>
+        Al eliminar &OpenCurlyDoubleQuote;${deleteRecipe.title}&CloseCurlyDoubleQuote; no se podra recuperar, continuar?
+      </p>
+      <button class="uk-button uk-button-text uk-modal-close uk-text-success">Cancelar</button>
+      <button class="uk-button uk-button-default uk-text-danger" click.delegate="continueDeleteRecipe()">Si, eliminar receta</button>
+    </div>
+  </div>
 </template>

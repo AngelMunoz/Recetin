@@ -35,7 +35,7 @@ export class App {
     } else {
       recipe = { ...event };
     }
-    return this.$recipes.saveRecipe(recipe).then(_ => {
+    return this.$recipes.saveRecipe(recipe).then((_: Recipe) => {
       this.preventSave = false;
       this.newRecipe = {
         title: 'Mi Receta',
