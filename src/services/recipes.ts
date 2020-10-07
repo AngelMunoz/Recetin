@@ -144,7 +144,7 @@ function stringifyRecipe(recipe: Recipe, isExport = false): string {
     mainStuff += `\n${step}`;
   }
   if(!isExport) {
-    return mainStuff.replace(/[>~<=+;]|(.-|.~)/ig, '');
+    return mainStuff.replace(/[>~=<+;]|(\.-|\.~)/ig, '');
   }
   return mainStuff
 }
