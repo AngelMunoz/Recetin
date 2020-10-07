@@ -113,9 +113,9 @@
       <form name="stepsForm" submit.trigger="trySaveRecipe('steps', newSteps)">
         <section class="uk-margin" repeat.for="step of newSteps">
           <div class="uk-margin">
-            <input type="text" class="uk-input uk-form-small uk-form-width-small" name="step-${$index}"
+            <textarea type="text" class="uk-textarea uk-form-small uk-form-width-small" name="step-${$index}"
               id="step-${$index}" placeholder="Paso ${$index + 1}" value.bind="step.directions" required
-              maxlength="240">
+              maxlength="240"></textarea>
             <rec-icon icon="Trash" can-click="true" click.delegate="removeNewStep($index)"></rec-icon>
           </div>
           <hr />

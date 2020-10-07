@@ -111,7 +111,7 @@ async function getRecipe(recipeId: string) {
  * @returns {string}
  */
 function stringifyIngredient(ingredient: Ingredient): string {
-  let mainIng = `${ingredient.name.trim()} - ${ingredient.amount.trim()}, ${ingredient.unit.trim()}`;
+  let mainIng = `${ingredient.name.trim()} ; ${ingredient.amount.trim()}, ${ingredient.unit.trim()}`;
   const replacements = ingredient?.replacements?.map(stringifyIngredient) ?? [];
   for (const replacement of replacements) {
     mainIng += `\n+ ${replacement}`;
@@ -144,13 +144,13 @@ function stringifyRecipe(recipe: Recipe, isExport = false): string {
     mainStuff += `\n${step}`;
   }
   if(!isExport) {
-    return mainStuff.replace(/[>~<=+]|(.-|.~)/ig, '');
+    return mainStuff.replace(/[>~<=+;]|(.-|.~)/ig, '');
   }
   return mainStuff
 }
 
 function parseIngredient(ingredient: string): [string, string, string] {
-  const [name, amountUnit] = ingredient.split('-')
+  const [name, amountUnit] = ingredient.split(';')
   const [amount, unit] = amountUnit.split(',')
   return [name.trim(), amount.trim(), unit.trim()];
 }
