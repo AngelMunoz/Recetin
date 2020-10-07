@@ -22,3 +22,13 @@ export function configure(aurelia: Aurelia): void {
 
   aurelia.start().then(() => aurelia.setRoot(PLATFORM.moduleName('app')));
 }
+
+if ('serviceWorker' in navigator && !environment.debug) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then(registration => {
+      console.log('SW registered: ', registration);
+    }).catch(registrationError => {
+      console.log('SW registration failed: ', registrationError);
+    });
+  });
+}

@@ -1,0 +1,15 @@
+{
+    "name": "Recetin",
+    "short_name": "Recetin",
+    "start_url": "/",
+    "display": "standalone",
+    "icons": [
+        {
+            "src": "icon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "background_color": "#F0F0F0",
+    "theme_color": "#F0F0F0"
+}
